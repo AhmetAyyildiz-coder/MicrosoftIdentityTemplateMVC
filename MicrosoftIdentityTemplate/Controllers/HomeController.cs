@@ -91,8 +91,10 @@ namespace MicrosoftIdentityTemplate.Controllers
                CustomIdentityUser user = await UserManager.FindByEmailAsync(viewModel.Email);
                 if (user != null)
                 {
-                    //eğer kullanıcı kendini kilitlettirdiyse belirli başarısız 
-                    //şifre girerek. Bunu bildirmeliyiz.
+                    //eğer kullanıcı şifre girerek  kendini kilitlettirdiyse belirli başarısız 
+                    // Bunu bildirmeliyiz.
+
+                    //bu if koşulu kullanıcının kilitli olup olmadıgını bize dondurur
                     if (await UserManager.IsLockedOutAsync(user))
                     {
                         ModelState.AddModelError("", "Hesabınız bir süreliğine kilitlenmiştir. Lütfen daha sonra tekrar deneyiniz.");
