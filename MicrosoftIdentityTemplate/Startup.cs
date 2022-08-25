@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using MicrosoftIdentityTemplate.CustomValidations;
 using MicrosoftIdentityTemplate.Models;
+using Microsoft.AspNetCore.Http;
 
 namespace MicrosoftIdentityTemplate
 {
@@ -41,7 +42,27 @@ namespace MicrosoftIdentityTemplate
                 .AddUserValidator<CustomUserValidation>() //class bazýnda user validations
                 .AddPasswordValidator<CustomIdentityPasswordValidations>() //class bazýnda password validations
                 .AddErrorDescriber<CustomIdentityErrorDescriptor>() //class bazýnda hatalarýn türkçeleþtirilmesi
-                .AddEntityFrameworkStores<CustomIdentityDbContext>(); 
+                .AddEntityFrameworkStores<CustomIdentityDbContext>();
+
+
+
+
+            //Cookie bazý kimlik doðrulama için cookie ayarlarý 
+            CookieBuilder cookieBuilder = new CookieBuilder();
+            cookieBuilder.Name = "MyIdentityCookie";
+            cookieBuilder.HttpOnly = false;
+            cookieBuilder.SameSite = SameSiteMode.Lax;
+            cookieBuilder.SecurePolicy = CookieSecurePolicy.SameAsRequest;
+
+            services.ConfigureApplicationCookie(opt =>
+            {
+                opt.LoginPath = new PathString("/Home/Login");
+                opt.Cookie = cookieBuilder;
+                opt.ExpireTimeSpan = TimeSpan.FromMinutes(40);
+                opt.SlidingExpiration = true; //cookie ömrünü uzatmak için üstteki deðere ek süre 
+                                              //eklemek için bu property true yapýlmalýdýr.
+            });
+
 
         }
 
