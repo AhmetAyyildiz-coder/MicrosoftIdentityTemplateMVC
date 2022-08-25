@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using MicrosoftIdentityTemplate.Models;
+using System.Threading.Tasks;
 
 namespace MicrosoftIdentityTemplate.Controllers
 {
@@ -71,6 +72,51 @@ namespace MicrosoftIdentityTemplate.Controllers
             }
 
             return View(passwordChangeViewModel);
+        }
+
+
+        public IActionResult UserEdit()
+        {
+            CustomIdentityUser user = userManager.FindByNameAsync(User.Identity.Name).Result;
+
+            UserViewModel userViewModel = user.Adapt<UserViewModel>();
+
+            return View(userViewModel);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UserEdit(UserViewModel userViewModel)
+        {
+            ModelState.Remove("Password");
+
+            if (ModelState.IsValid)
+            {
+                CustomIdentityUser user = await userManager.FindByNameAsync(User.Identity.Name);
+
+                user.UserName = userViewModel.UserName;
+                user.Email = userViewModel.Email;
+                user.PhoneNumber = userViewModel.PhoneNumber;
+
+                IdentityResult result = await userManager.UpdateAsync(user);
+
+                if (result.Succeeded)
+                {
+                    await userManager.UpdateSecurityStampAsync(user);
+                    await signInManager.SignOutAsync();
+                    await signInManager.SignInAsync(user, true);
+
+                    ViewBag.success = "true";
+                }
+                else
+                {
+                    foreach (var item in result.Errors)
+                    {
+                        ModelState.AddModelError("", item.Description);
+                    }
+                }
+            }
+
+            return View(userViewModel);
         }
     }
 }
