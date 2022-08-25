@@ -7,6 +7,8 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
+using MicrosoftIdentityTemplate.ViewModels;
+using SignInResult = Microsoft.AspNetCore.Identity.SignInResult;
 
 namespace MicrosoftIdentityTemplate.Controllers
 {
@@ -14,11 +16,12 @@ namespace MicrosoftIdentityTemplate.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         public UserManager<CustomIdentityUser> UserManager { get; }
-
-        public HomeController(ILogger<HomeController> logger, UserManager<CustomIdentityUser> userManager)
+        public SignInManager<CustomIdentityUser> SignInManager { get; }
+        public HomeController(ILogger<HomeController> logger, UserManager<CustomIdentityUser> userManager, SignInManager<CustomIdentityUser> signInManager)
         {
             _logger = logger;
             UserManager = userManager;
+            SignInManager = signInManager;
         }
 
         public IActionResult Index()
@@ -69,6 +72,39 @@ namespace MicrosoftIdentityTemplate.Controllers
                 }
             }
             return View(model);
+        }
+
+        public IActionResult Login(string ReturnUrl)
+        {
+            TempData["ReturnUrl"] = ReturnUrl;
+            return View();
+        }
+
+        public async Task<IActionResult> Login(LoginViewModel viewModel)
+        {
+            if (ModelState.IsValid)
+            {
+               CustomIdentityUser user = await UserManager.FindByEmailAsync(viewModel.Email);
+                if (user != null)
+                {
+                    await SignInManager.SignOutAsync();
+                    SignInResult result = await SignInManager.PasswordSignInAsync(user, viewModel.Password, viewModel.RememberMe, false);
+                    if (result.Succeeded)
+                    {
+                        if (TempData["ReturnUrl"] !=null)
+                        {
+                            return Redirect(TempData["ReturnUrl"].ToString());
+                        }
+                        return RedirectToAction("Index", "Member");
+                    }
+                }
+                else
+                {
+                    ModelState.AddModelError("", "Geçersiz email veya şifre");
+
+                }
+            }
+            return View(viewModel);
         }
     }
 }
