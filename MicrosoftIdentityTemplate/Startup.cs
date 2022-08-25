@@ -63,6 +63,7 @@ namespace MicrosoftIdentityTemplate
                                               //eklemek için bu property true yapýlmalýdýr.
 
                 opt.ExpireTimeSpan = TimeSpan.FromMinutes(40);
+                opt.AccessDeniedPath = new PathString("/Member/AccessDenied");
             });
 
 

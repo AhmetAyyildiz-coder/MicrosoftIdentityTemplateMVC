@@ -152,5 +152,10 @@ namespace MicrosoftIdentityTemplate.Controllers
         {
             signInManager.SignOutAsync();
         }
+
+        public IActionResult AccessDenied()
+        {
+            return View();
+        }
     }
 }
