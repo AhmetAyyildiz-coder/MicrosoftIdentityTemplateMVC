@@ -58,7 +58,7 @@ namespace MicrosoftIdentityTemplate
             {
                 opt.LoginPath = new PathString("/Home/Login");
                 opt.Cookie = cookieBuilder;
-                
+                opt.LogoutPath = new PathString("/Member/LogOut");
                 opt.SlidingExpiration = true; //cookie ömrünü uzatmak için alttaki deðere ek süre 
                                               //eklemek için bu property true yapýlmalýdýr.
 
