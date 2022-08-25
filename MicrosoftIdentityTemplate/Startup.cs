@@ -39,7 +39,7 @@ namespace MicrosoftIdentityTemplate
 
             //Identity Builder with dbcontext 
             services.AddIdentity<CustomIdentityUser, CustomIdentityRole>()
-                .AddUserValidator<CustomUserValidation>() //class bazýnda user validations
+                /*.AddUserValidator<CustomUserValidation>()*/ //class bazýnda user validations
                 .AddPasswordValidator<CustomIdentityPasswordValidations>() //class bazýnda password validations
                 .AddErrorDescriber<CustomIdentityErrorDescriptor>() //class bazýnda hatalarýn türkçeleþtirilmesi
                 .AddEntityFrameworkStores<CustomIdentityDbContext>();
@@ -58,9 +58,11 @@ namespace MicrosoftIdentityTemplate
             {
                 opt.LoginPath = new PathString("/Home/Login");
                 opt.Cookie = cookieBuilder;
-                opt.ExpireTimeSpan = TimeSpan.FromMinutes(40);
-                opt.SlidingExpiration = true; //cookie ömrünü uzatmak için üstteki deðere ek süre 
+                
+                opt.SlidingExpiration = true; //cookie ömrünü uzatmak için alttaki deðere ek süre 
                                               //eklemek için bu property true yapýlmalýdýr.
+
+                opt.ExpireTimeSpan = TimeSpan.FromMinutes(40);
             });
 
 
@@ -85,7 +87,7 @@ namespace MicrosoftIdentityTemplate
             app.UseStaticFiles();
 
             app.UseRouting();
-
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

@@ -73,13 +73,17 @@ namespace MicrosoftIdentityTemplate.Controllers
             }
             return View(model);
         }
-
+        [HttpGet]
         public IActionResult Login(string ReturnUrl)
         {
+            if (User.Identity.IsAuthenticated)
+            {
+                return Redirect(TempData["ReturnUrl"].ToString());
+            }
             TempData["ReturnUrl"] = ReturnUrl;
             return View();
         }
-
+        [HttpPost]
         public async Task<IActionResult> Login(LoginViewModel viewModel)
         {
             if (ModelState.IsValid)
@@ -98,11 +102,12 @@ namespace MicrosoftIdentityTemplate.Controllers
                         return RedirectToAction("Index", "Member");
                     }
                 }
-                else
-                {
-                    ModelState.AddModelError("", "Geçersiz email veya şifre");
+               
+            }
+            else
+            {
+                ModelState.AddModelError("", "Geçersiz email veya şifre");
 
-                }
             }
             return View(viewModel);
         }

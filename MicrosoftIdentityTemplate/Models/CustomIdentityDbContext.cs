@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace MicrosoftIdentityTemplate.Models
 {
-    public class CustomIdentityDbContext :IdentityDbContext<CustomIdentityUser>
+    public class CustomIdentityDbContext :IdentityDbContext<CustomIdentityUser , CustomIdentityRole , string>
     {
 
 
