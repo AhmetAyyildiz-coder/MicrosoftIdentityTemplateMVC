@@ -13,19 +13,17 @@ using System.Threading.Tasks;
 namespace MicrosoftIdentityTemplate.Controllers
 {
     [Authorize]
-    public class MemberController : Controller
+    public class MemberController : BaseController
     {
-        public UserManager<CustomIdentityUser> userManager { get; }
-        public SignInManager<CustomIdentityUser> signInManager { get; }
+       
 
-        public MemberController(UserManager<CustomIdentityUser> userManager, SignInManager<CustomIdentityUser> signInManager)
+        public MemberController(UserManager<CustomIdentityUser> userManager, SignInManager<CustomIdentityUser> signInManager) :base(userManager,signInManager)
         {
-            this.userManager = userManager;
-            this.signInManager = signInManager;
+         
         }
         public IActionResult Index()
         {
-            CustomIdentityUser user = userManager.FindByNameAsync(User.Identity.Name).Result;
+            CustomIdentityUser user = CurrentUser;
             UserViewModel userViewModel = user.Adapt<UserViewModel>();
 
             return View(userViewModel);
@@ -43,7 +41,7 @@ namespace MicrosoftIdentityTemplate.Controllers
         {
             if (ModelState.IsValid)
             {
-                CustomIdentityUser user = userManager.FindByNameAsync(User.Identity.Name).Result;
+                CustomIdentityUser user = CurrentUser;
 
                 bool exist = userManager.CheckPasswordAsync(user, passwordChangeViewModel.PasswordOld).Result;
 
@@ -64,10 +62,11 @@ namespace MicrosoftIdentityTemplate.Controllers
                     }
                     else
                     {
-                        foreach (var item in result.Errors)
-                        {
-                            ModelState.AddModelError("", item.Description);
-                        }
+                        //foreach (var item in result.Errors)
+                        //{
+                        //    ModelState.AddModelError("", item.Description);
+                        //}
+                        AddModelError(result);
                     }
                 }
                 else
@@ -82,7 +81,7 @@ namespace MicrosoftIdentityTemplate.Controllers
 
         public IActionResult UserEdit()
         {
-            CustomIdentityUser user = userManager.FindByNameAsync(User.Identity.Name).Result;
+            CustomIdentityUser user = CurrentUser;
             ViewBag.Gender = new SelectList(Enum.GetNames(typeof(Gender)));
             UserViewModel userViewModel = user.Adapt<UserViewModel>();
 
@@ -98,7 +97,7 @@ namespace MicrosoftIdentityTemplate.Controllers
             ViewBag.Gender = new SelectList(Enum.GetNames(typeof(Gender)));
             if (ModelState.IsValid)
             {
-                CustomIdentityUser user = await userManager.FindByNameAsync(User.Identity.Name);
+                CustomIdentityUser user = CurrentUser;
 
 
 
@@ -137,10 +136,11 @@ namespace MicrosoftIdentityTemplate.Controllers
                 }
                 else
                 {
-                    foreach (var item in result.Errors)
-                    {
-                        ModelState.AddModelError("", item.Description);
-                    }
+                    //foreach (var item in result.Errors)
+                    //{
+                    //    ModelState.AddModelError("", item.Description);
+                    //}
+                    AddModelError(result);
                 }
             }
 
