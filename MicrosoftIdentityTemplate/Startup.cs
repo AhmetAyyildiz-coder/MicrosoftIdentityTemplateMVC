@@ -10,6 +10,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using MicrosoftIdentityTemplate.CustomValidations;
 using MicrosoftIdentityTemplate.Models;
 
 namespace MicrosoftIdentityTemplate
@@ -36,11 +37,8 @@ namespace MicrosoftIdentityTemplate
                 });
 
             //Identity Builder with dbcontext 
-            services.AddIdentity<CustomIdentityUser, CustomIdentityRole>(opt =>
-                {//service üzerinden þifre doðrulama ayarlarý yapabilmekteyiz bu sekilde
-                    opt.Password.RequiredLength = 4;
-                    opt.Password.RequireUppercase = false;
-                })
+            services.AddIdentity<CustomIdentityUser, CustomIdentityRole>()
+                .AddPasswordValidator<CustomIdentityPasswordValidations>()
                 .AddEntityFrameworkStores<CustomIdentityDbContext>();
 
         }
