@@ -37,7 +37,12 @@ namespace MicrosoftIdentityTemplate
                 });
 
             //Identity Builder with dbcontext 
-            services.AddIdentity<CustomIdentityUser, CustomIdentityRole>()
+            services.AddIdentity<CustomIdentityUser, CustomIdentityRole>(
+                opt=>
+                {
+                    opt.User.RequireUniqueEmail = true;
+                    opt.User.AllowedUserNameCharacters= "abcçdefghýijklmnoçpqrsþtuüvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._";
+                })
                 .AddPasswordValidator<CustomIdentityPasswordValidations>()
                 .AddEntityFrameworkStores<CustomIdentityDbContext>();
 
