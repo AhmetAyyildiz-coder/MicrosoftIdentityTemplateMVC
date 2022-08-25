@@ -91,22 +91,56 @@ namespace MicrosoftIdentityTemplate.Controllers
                CustomIdentityUser user = await UserManager.FindByEmailAsync(viewModel.Email);
                 if (user != null)
                 {
+                    //eğer kullanıcı kendini kilitlettirdiyse belirli başarısız 
+                    //şifre girerek. Bunu bildirmeliyiz.
+                    if (await UserManager.IsLockedOutAsync(user))
+                    {
+                        ModelState.AddModelError("", "Hesabınız bir süreliğine kilitlenmiştir. Lütfen daha sonra tekrar deneyiniz.");
+
+                        return View(viewModel);
+                    }
+
                     await SignInManager.SignOutAsync();
                     SignInResult result = await SignInManager.PasswordSignInAsync(user, viewModel.Password, viewModel.RememberMe, false);
                     if (result.Succeeded)
                     {
+
+                        //eger kullanıcı basarili sekilde sisteme girdiyse bunu sıfırlayalım
+                        await UserManager.ResetAccessFailedCountAsync(user);
+
                         if (TempData["ReturnUrl"] !=null)
                         {
                             return Redirect(TempData["ReturnUrl"].ToString());
                         }
                         return RedirectToAction("Index", "Member");
                     }
+                    else //eğer sistemde bu emailde bi kullanıcı varsa ve şifre girmede 
+                    //başarısız oluyorsa , bu durumda bu arkadaşın başarısız girişini arttırmalıyız.
+                    {
+                        await UserManager.AccessFailedAsync(user); //+1 arttır başarısız giriş sayısını diyoruz
+
+                        int fail = await UserManager.GetAccessFailedCountAsync(user);
+                        ModelState.AddModelError("", $" {fail} kez başarısız giriş.");
+                        if (fail == 3)
+                        {//eğer 3 başarısız giriş yaparsak belirli tarihe kadar kullanıcıyı kilitle diyoruz.
+                            //default olarak 20dakika yaptık bunu sistemde
+                            await UserManager.SetLockoutEndDateAsync(user, new System.DateTimeOffset(DateTime.Now.AddMinutes(20)));
+
+                            ModelState.AddModelError("", "Hesabınız 3 başarısız girişten dolayı 20 dakika süreyle kitlenmiştir. Lütfen daha sonra tekrar deneyiniz.");
+                        }
+                        else
+                        {//eğer başarısız giriş sayısı daha 3 olmadıysa tekrar email yanlış bildirimi verelim
+                            //burda isteğe bağlı max 3 hakkınız var yazabiliriz.
+                            ModelState.AddModelError("", $"Email adresiniz veya şifreniz yanlıştır. " +
+                                $"Eğer {3-fail} kez daha başarısız giriş yaparsanız hesabınız 20 dakika kilitlenicektir");
+                        }
+                    }
                 }
                
             }
             else
             {
-                ModelState.AddModelError("", "Geçersiz email veya şifre");
+                ModelState.AddModelError("", "Bu email adresine kayıtlı kullanıcı bulunamamıştır.");
 
             }
             return View(viewModel);
