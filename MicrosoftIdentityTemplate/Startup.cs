@@ -36,7 +36,7 @@ namespace MicrosoftIdentityTemplate
                 });
 
             //Identity Builder with dbcontext 
-            services.AddIdentity<CustomIdentityUser, IdentityRole>()
+            services.AddIdentity<CustomIdentityUser, CustomIdentityRole>()
                 .AddEntityFrameworkStores<CustomIdentityDbContext>();
 
         }
