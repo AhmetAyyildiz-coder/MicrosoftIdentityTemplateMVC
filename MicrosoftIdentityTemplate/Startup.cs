@@ -8,6 +8,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using MicrosoftIdentityTemplate.Models;
 
 namespace MicrosoftIdentityTemplate
 {
@@ -24,6 +27,18 @@ namespace MicrosoftIdentityTemplate
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
+
+
+            //IdentityDbContext builder
+            services.AddDbContext<CustomIdentityDbContext>(opt =>
+                {
+                    opt.UseSqlServer(Configuration.GetConnectionString("SqlConnection"));
+                });
+
+            //Identity Builder with dbcontext 
+            services.AddIdentity<CustomIdentityUser, IdentityRole>()
+                .AddEntityFrameworkStores<CustomIdentityDbContext>();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -40,6 +55,8 @@ namespace MicrosoftIdentityTemplate
                 app.UseHsts();
             }
             app.UseHttpsRedirection();
+            app.UseDeveloperExceptionPage();
+            app.UseStatusCodePages();
             app.UseStaticFiles();
 
             app.UseRouting();
