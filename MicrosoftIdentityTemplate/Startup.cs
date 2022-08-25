@@ -40,6 +40,7 @@ namespace MicrosoftIdentityTemplate
             services.AddIdentity<CustomIdentityUser, CustomIdentityRole>()
                 .AddUserValidator<CustomUserValidation>() //class bazýnda user validations
                 .AddPasswordValidator<CustomIdentityPasswordValidations>() //class bazýnda password validations
+                .AddErrorDescriber<CustomIdentityErrorDescriptor>() //class bazýnda hatalarýn türkçeleþtirilmesi
                 .AddEntityFrameworkStores<CustomIdentityDbContext>(); 
 
         }
