@@ -27,7 +27,16 @@ namespace MicrosoftIdentityTemplate.Controllers
             return View(userManager.Users.ToList());
         }
 
+        public IActionResult RoleDelete(string id)
+        {
+            CustomIdentityRole role = roleManager.FindByIdAsync(id).Result;
+            if (role != null)
+            {
+                IdentityResult result = roleManager.DeleteAsync(role).Result;
+            }
 
+            return RedirectToAction("Roles");
+        }
 
         //role olusturma
         public IActionResult RoleCreate()
