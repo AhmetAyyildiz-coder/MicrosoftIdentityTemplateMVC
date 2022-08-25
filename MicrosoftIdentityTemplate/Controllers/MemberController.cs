@@ -1,8 +1,13 @@
 ﻿using Mapster;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using MicrosoftIdentityTemplate.Enums;
 using MicrosoftIdentityTemplate.Models;
+using System;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace MicrosoftIdentityTemplate.Controllers
@@ -78,7 +83,7 @@ namespace MicrosoftIdentityTemplate.Controllers
         public IActionResult UserEdit()
         {
             CustomIdentityUser user = userManager.FindByNameAsync(User.Identity.Name).Result;
-
+            ViewBag.Gender = new SelectList(Enum.GetNames(typeof(Gender)));
             UserViewModel userViewModel = user.Adapt<UserViewModel>();
 
             return View(userViewModel);
@@ -87,18 +92,39 @@ namespace MicrosoftIdentityTemplate.Controllers
 
 
         [HttpPost]
-        public async Task<IActionResult> UserEdit(UserViewModel userViewModel)
+        public async Task<IActionResult> UserEdit(UserViewModel userViewModel , IFormFile userPicture)
         {
             ModelState.Remove("Password");
-
+            ViewBag.Gender = new SelectList(Enum.GetNames(typeof(Gender)));
             if (ModelState.IsValid)
             {
                 CustomIdentityUser user = await userManager.FindByNameAsync(User.Identity.Name);
 
+
+
+                //kullanıcı için profil fotoğrafı ekleme mekanizması 
+                if (userPicture != null && userPicture.Length > 0)
+                {
+                    var fileName = Guid.NewGuid().ToString() + Path.GetExtension(userPicture.FileName);
+
+                    var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/UserPicture", fileName);
+
+                    using (var stream = new FileStream(path, FileMode.Create))
+                    {
+                        await userPicture.CopyToAsync(stream);
+
+                        user.Picture = "/UserPicture/" + fileName;
+                    }
+                }
+
                 user.UserName = userViewModel.UserName;
                 user.Email = userViewModel.Email;
                 user.PhoneNumber = userViewModel.PhoneNumber;
+                
 
+                user.BirthDay = userViewModel.BirthDay;
+
+                user.Gender = (int)userViewModel.Gender;
                 IdentityResult result = await userManager.UpdateAsync(user);
 
                 if (result.Succeeded)
