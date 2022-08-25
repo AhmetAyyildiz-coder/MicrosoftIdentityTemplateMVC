@@ -1,6 +1,32 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@{
+@model UserViewModel
+
 @{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Member/_MemberLayout.cshtml";
 }
-<h2>Member Controller Index Page</h2>
+<h3 class="text-center">Kullanıcı Bilgileri</h3>
+<div class="row">
+    <div class="col-sm-3">
+        <img style="width:100%; height:100%" src="~/UserPicture/user.webp" />
+    </div>
+    <div class="col-sm-9">
+
+        <table class="table table-bordered table-striped">
+            <tr>
+                <th>Kullanıcı ismi</th>
+                <td>@Model.UserName</td>
+            </tr>
+            <tr>
+                <th>E-posta</th>
+                <td>@Model.Email</td>
+            </tr>
+
+<h2>Index</h2> 
+            <tr>
+                <th>Telefon no</th>
+                <td>@Model.PhoneNumber</td>
+            </tr>
+        </table>
+    </div>
+</div> 
