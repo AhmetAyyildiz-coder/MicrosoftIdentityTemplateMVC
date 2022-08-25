@@ -2,8 +2,6 @@
 using Microsoft.AspNetCore.Razor.TagHelpers;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-
-
 using System.Linq;
 using MicrosoftIdentityTemplate.Models;
 
@@ -26,7 +24,7 @@ namespace MicrosoftIdentityTemplate.CustomTagHelpers
 
 
         /// <summary>
-        /// Tag = value ile verdiğimiz ifadedeki value'yi temsil eden değişkenimiz.
+        /// Tag'a verdiğimiz id değerine göre rolleri tag içerisine content olarak çıktı verir.
         /// </summary>
         [HtmlAttributeName("user-roles")] 
         public string UserId { get; set; }
@@ -39,20 +37,29 @@ namespace MicrosoftIdentityTemplate.CustomTagHelpers
         /// <returns></returns>
         public override async Task ProcessAsync(TagHelperContext context, TagHelperOutput output)
         {
-            var tagname=  context.TagName;
+            var tagname = context.TagName;
 
             CustomIdentityUser user = await UserManager.FindByIdAsync(UserId); //öncelikle gelen userId'ye göre user'ımızı bulduk.
 
             IList<string> roles = await UserManager.GetRolesAsync(user); //bir kullanıcının birden fazla rolü olabilir.
 
             string html = string.Empty;
-
-            roles.ToList().ForEach(x =>
+            if (roles.Count == 0)
             {
-                html += $"<span class='badge badge-info'>  {x}  </span>";
-            });
+                html = "This user not have any role";
+            }
+            else
+            {
+                roles.ToList().ForEach(x =>
+                {
+                    html += $"<span class='badge badge-pill  bg-primary text-dark'> {x}  </span>";
+                    //html += "<span class='badge bg-warning text-dark'>Primary</span>";
+                });
+            }
+
 
             output.Content.SetHtmlContent(html); //tag içerisine yazılacak değeri ayarladık.
+            
         }
     }
 }
