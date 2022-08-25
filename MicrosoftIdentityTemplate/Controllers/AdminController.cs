@@ -110,5 +110,60 @@ namespace MicrosoftIdentityTemplate.Controllers
         {
             return View(roleManager.Roles.ToList());
         }
+
+
+
+        public IActionResult RoleAssign(string id)
+        {
+            TempData["userId"] = id;
+            CustomIdentityUser user = userManager.FindByIdAsync(id).Result;
+
+            ViewBag.userName = user.UserName;
+
+            IQueryable<CustomIdentityRole> roles = roleManager.Roles;
+
+            List<string> userroles = userManager.GetRolesAsync(user).Result as List<string>;
+
+            List<RoleAssignViewModel> roleAssignViewModels = new List<RoleAssignViewModel>();
+
+            foreach (var role in roles)
+            {
+                RoleAssignViewModel r = new RoleAssignViewModel();
+                r.RoleId = role.Id;
+                r.RoleName = role.Name;
+                if (userroles.Contains(role.Name))
+                {
+                    r.Exist = true;
+                }
+                else
+                {
+                    r.Exist = false;
+                }
+                roleAssignViewModels.Add(r);
+            }
+
+            return View(roleAssignViewModels);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> RoleAssign(List<RoleAssignViewModel> roleAssignViewModels)
+        {
+            CustomIdentityUser user = userManager.FindByIdAsync(TempData["userId"].ToString()).Result;
+
+            foreach (var item in roleAssignViewModels)
+            {
+                if (item.Exist)
+
+                {
+                    await userManager.AddToRoleAsync(user, item.RoleName);
+                }
+                else
+                {
+                    await userManager.RemoveFromRoleAsync(user, item.RoleName);
+                }
+            }
+
+            return RedirectToAction("Users");
+        }
     }
 }
