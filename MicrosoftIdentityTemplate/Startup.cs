@@ -37,14 +37,10 @@ namespace MicrosoftIdentityTemplate
                 });
 
             //Identity Builder with dbcontext 
-            services.AddIdentity<CustomIdentityUser, CustomIdentityRole>(
-                opt=>
-                {
-                    opt.User.RequireUniqueEmail = true;
-                    opt.User.AllowedUserNameCharacters= "abcçdefghýijklmnoçpqrsþtuüvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._";
-                })
-                .AddPasswordValidator<CustomIdentityPasswordValidations>()
-                .AddEntityFrameworkStores<CustomIdentityDbContext>();
+            services.AddIdentity<CustomIdentityUser, CustomIdentityRole>()
+                .AddUserValidator<CustomUserValidation>() //class bazýnda user validations
+                .AddPasswordValidator<CustomIdentityPasswordValidations>() //class bazýnda password validations
+                .AddEntityFrameworkStores<CustomIdentityDbContext>(); 
 
         }
 
