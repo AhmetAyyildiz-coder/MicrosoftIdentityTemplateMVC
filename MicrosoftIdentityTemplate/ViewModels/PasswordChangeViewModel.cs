@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Xml.Linq;
 
-namespace MicrosoftIdentityTemplate.Models
+namespace MicrosoftIdentityTemplate.ViewModels
 {
     public class PasswordChangeViewModel
     {

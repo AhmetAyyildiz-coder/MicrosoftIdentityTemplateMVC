@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using MicrosoftIdentityTemplate.Enums;
 using MicrosoftIdentityTemplate.Models;
+using MicrosoftIdentityTemplate.ViewModels;
 using System;
 using System.IO;
 using System.Threading.Tasks;

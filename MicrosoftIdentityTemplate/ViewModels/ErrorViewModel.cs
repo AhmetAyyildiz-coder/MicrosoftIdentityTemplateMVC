@@ -1,6 +1,6 @@
 using System;
 
-namespace MicrosoftIdentityTemplate.Models
+namespace MicrosoftIdentityTemplate.ViewModels
 {
     public class ErrorViewModel
     {

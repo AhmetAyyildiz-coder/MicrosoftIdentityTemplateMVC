@@ -31,7 +31,14 @@
             </tr>
             <tr>
                 <th>Doğum tarihi</th>
-                <td>@Model.BirthDay.Value.ToShortDateString()</td>
+                @if (Model.BirthDay !=null)
+                    {
+                    <td>@Model.BirthDay.Value.ToShortDateString()</td>
+                    }
+                    else {
+                        <td>Null</td>
+                    }
+                
             </tr>
 
             <tr>

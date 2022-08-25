@@ -4,7 +4,7 @@ using System.Xml.Linq;
 using System;
 using MicrosoftIdentityTemplate.Enums;
 
-namespace MicrosoftIdentityTemplate.Models
+namespace MicrosoftIdentityTemplate.ViewModels
 {
     public class UserViewModel
     {
