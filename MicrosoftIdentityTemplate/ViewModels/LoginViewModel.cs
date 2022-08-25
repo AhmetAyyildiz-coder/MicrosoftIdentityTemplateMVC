@@ -18,3 +18,4 @@ namespace MicrosoftIdentityTemplate.ViewModels
 
         public bool RememberMe { get; set; }
     }
+}
