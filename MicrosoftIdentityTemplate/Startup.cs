@@ -36,7 +36,11 @@ namespace MicrosoftIdentityTemplate
                 });
 
             //Identity Builder with dbcontext 
-            services.AddIdentity<CustomIdentityUser, CustomIdentityRole>()
+            services.AddIdentity<CustomIdentityUser, CustomIdentityRole>(opt =>
+                {//service üzerinden þifre doðrulama ayarlarý yapabilmekteyiz bu sekilde
+                    opt.Password.RequiredLength = 4;
+                    opt.Password.RequireUppercase = false;
+                })
                 .AddEntityFrameworkStores<CustomIdentityDbContext>();
 
         }
