@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using MicrosoftIdentityTemplate.Models;
 using MicrosoftIdentityTemplate.ViewModels;
+using Mapster;
 
 namespace MicrosoftIdentityTemplate.Controllers
 {
@@ -37,6 +38,47 @@ namespace MicrosoftIdentityTemplate.Controllers
 
             return RedirectToAction("Roles");
         }
+
+
+        public IActionResult RoleUpdate(string id)
+        {
+            CustomIdentityRole role = roleManager.FindByIdAsync(id).Result;
+
+            if (role != null)
+            {
+                return View(role.Adapt<RoleViewModel>());
+            }
+
+            return RedirectToAction("Roles");
+        }
+
+        [HttpPost]
+        public IActionResult RoleUpdate(RoleViewModel roleViewModel)
+        {
+            CustomIdentityRole role = roleManager.FindByIdAsync(roleViewModel.Id).Result;
+
+            if (role != null)
+            {
+                role.Name = roleViewModel.Name;
+                IdentityResult result = roleManager.UpdateAsync(role).Result;
+
+                if (result.Succeeded)
+                {
+                    return RedirectToAction("Roles");
+                }
+                else
+                {
+                    AddModelError(result);
+                }
+            }
+            else
+            {
+                ModelState.AddModelError("", "Güncelleme işlemi başarısız oldu.");
+            }
+
+            return View(roleViewModel);
+        }
+
 
         //role olusturma
         public IActionResult RoleCreate()
