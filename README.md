@@ -7,6 +7,10 @@ And I showed how this structure is customized.
 
 You can create and use your own database by changing the SqlConnection node in appsetting.json.
 
+default admin email => admin@gmail.com 
+default admin password => VTH57wz8ZV_*
+
+
 ![image](https://user-images.githubusercontent.com/84086596/186772665-49af259d-27fd-40a5-8a59-4fad4f3b6344.png)
 
 You can assign new roles to members under Admin -> users.
